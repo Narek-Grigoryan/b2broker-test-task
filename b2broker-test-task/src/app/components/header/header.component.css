@@ -1,0 +1,13 @@
+.filters-form {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px
+}
+
+.filters-form .mat-mdc-form-field {
+  flex: 1
+}
+
+.chips-list {
+  flex: 2;
+}

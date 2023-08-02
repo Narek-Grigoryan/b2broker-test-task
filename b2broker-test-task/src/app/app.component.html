@@ -1,0 +1,5 @@
+<div class="main-container">
+  <app-header (filtersChange)="onFilterChangeHandler($event)"></app-header>
+
+  <app-table [loading]="(tableDataLoading | async)!" [dataSource]="(tableData | async)!"></app-table>
+</div>

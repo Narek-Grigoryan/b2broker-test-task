@@ -1,0 +1,52 @@
+<div class="header-container">
+  <form class="filters-form" [formGroup]="filtersControlsForm">
+    <mat-form-field>
+      <mat-label>Timer (ms)</mat-label>
+      <input matInput type="number" formControlName="timer"/>
+
+      <div *ngIf="filtersControlsForm.get('timer')!.touched && filtersControlsForm.get('timer')!.invalid">
+        <mat-error *ngIf="filtersControlsForm.get('timer')!.errors!['required']">Timer (ms) is required</mat-error>
+        <mat-error *ngIf="filtersControlsForm.get('timer')!.errors!['max']">Max value is 5000.</mat-error>
+        <mat-error *ngIf="filtersControlsForm.get('timer')!.errors!['min']">Min value is 100.</mat-error>
+      </div>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Array size</mat-label>
+      <input matInput type="number" formControlName="arraySize"/>
+      <div *ngIf="filtersControlsForm.get('arraySize')!.touched && filtersControlsForm.get('arraySize')!.invalid">
+        <mat-error *ngIf="filtersControlsForm.get('arraySize')!.errors!['required']">Array size is required</mat-error>
+        <mat-error *ngIf="filtersControlsForm.get('arraySize')!.errors!['max']">Max value is 1000000.</mat-error>
+        <mat-error *ngIf="filtersControlsForm.get('arraySize')!.errors!['min']">Min value is 10.</mat-error>
+      </div>
+    </mat-form-field>
+
+
+    <mat-form-field class="chips-list">
+      <mat-label>Additional array Ids</mat-label>
+      <mat-chip-grid #chipGrid aria-label="Enter fruits">
+        <mat-chip-row *ngFor="let id of additionalArrayIds"
+                      (removed)="remove(id)"
+                      [editable]="true"
+                      (edited)="edit(id, $event)"
+                      [aria-description]="'press enter to edit ' + id">
+          {{id}}
+          <button matChipRemove [attr.aria-label]="'remove ' + id">
+            <mat-icon>cancel</mat-icon>
+          </button>
+        </mat-chip-row>
+        <input placeholder="New id"
+               [matChipInputFor]="chipGrid"
+               [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+               [matChipInputAddOnBlur]="false"
+               (matChipInputTokenEnd)="add($event)"
+        />
+      </mat-chip-grid>
+
+      <div *ngIf="filtersControlsForm.get('additionalArrayIds')!.touched && filtersControlsForm.get('additionalArrayIds')!.invalid">
+        <mat-error *ngIf="filtersControlsForm.get('additionalArrayIds')!.errors!['maxLength']">Ids max count is 10</mat-error>
+      </div>
+    </mat-form-field>
+  </form>
+
+</div>
