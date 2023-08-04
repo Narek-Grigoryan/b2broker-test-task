@@ -24,13 +24,18 @@ function generateRowItem(id: number): BeResponseModel {
   return {
     id: uuidv4(),
     int: Math.floor(Math.random() * 1000),
-    float: Math.random(),
+    float: generateRandomFloat18(),
     color:  getRandomHexColor(),
     child: {
       id: uuidv4(),
       color: getRandomHexColor()
     }
   }
+}
+
+function generateRandomFloat18() {
+  const randomNum = Math.random();
+  return parseFloat(randomNum.toFixed(18));
 }
 
 function getRandomHexColor(): string {
