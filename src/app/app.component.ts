@@ -1,5 +1,5 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {FilterChangeI} from "./components/header/header.models";
+import {FilterI} from "./components/header/header.models";
 import {BeResponseModel} from "./models/be-response.model";
 import {TableRowViewModel} from "./components/table/table.models";
 import {TableDataStoreService} from "./services/table-data-store.service";
@@ -13,21 +13,26 @@ import {Observable, Subscription} from "rxjs";
 export class AppComponent implements OnInit, OnDestroy {
   public tableData: Observable<TableRowViewModel[]> = this._tableDataStoreService.tableData$;
   public tableDataLoading: Observable<boolean> = this._tableDataStoreService.loading$;
+  public filterValue: FilterI = {
+    timer: 300,
+    arraySize: 1000,
+    additionalArrayIds: []
+  };
 
   private readonly TABLE_ROWS_COUNT = 10;
   private _worker: Worker | undefined;
   private _tableDataSubscription$!: Subscription;
-  private _filterValue: FilterChangeI;
 
   constructor(private _tableDataStoreService: TableDataStoreService) {
   }
 
   ngOnInit(): void {
     this._initWebWorker();
+    this._init();
   }
 
-  onFilterChangeHandler(filterValue: FilterChangeI): void {
-    this._filterValue = filterValue;
+  onFilterChangeHandler(filterValue: FilterI): void {
+    this.filterValue = filterValue;
     this._tableDataStoreService.loadingOn();
 
     setTimeout(() => {
@@ -39,6 +44,20 @@ export class AppComponent implements OnInit, OnDestroy {
 
       this._tableDataStoreService.loadingOff();
     }, filterValue.timer);
+  }
+
+  _init(): void {
+    this._tableDataStoreService.loadingOn();
+
+    setTimeout(() => {
+      if (this._worker) {
+        this._worker.postMessage(this.filterValue);
+      } else {
+        console.error('Workers not supported!!!.');
+      }
+
+      this._tableDataStoreService.loadingOff();
+    }, this.filterValue.timer);
   }
 
   private _initWebWorker(): void {
@@ -58,7 +77,8 @@ export class AppComponent implements OnInit, OnDestroy {
 
   private _getSocketResponseLast10ElementsInTableRowViewTypeAndOverrideIds(data: BeResponseModel[]): TableRowViewModel[] {
     const tableRowsArray: TableRowViewModel[] = [];
-    const additionalArrayIds: string[] = [...this._filterValue.additionalArrayIds];
+
+    const additionalArrayIds: string[] = [...this.filterValue.additionalArrayIds];
 
     for (let i = data.length - this.TABLE_ROWS_COUNT; i < data.length; i++) {
       const tableRow = new TableRowViewModel();
